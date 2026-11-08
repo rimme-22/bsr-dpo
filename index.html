@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BSR-DPO — Channel Selection from Campaign Logs · KAIA 2026</title>
-<meta name="description" content="Choosing the right marketing channel for every customer, from logged campaign data alone. BSR-DPO — KAIA 2026 poster.">
+<title>BSR-DPO · ICAIF '26 · Paper 437</title>
+<meta name="description" content="Choosing the right marketing channel for every customer, from logged campaign data alone. BSR-DPO, ICAIF '26 poster (paper 437).">
 <style>
   :root {
     --crimson: #8B0029;
@@ -119,32 +119,33 @@
 <body>
 
 <div class="hero">
-  <div class="badge">KAIA 2026 · Poster Session</div>
+  <div class="badge">ICAIF '26 · Paper 437</div>
   <h1>Collapse-Resistant Preference Optimization<br>for Financial Marketing Channel Selection</h1>
-  <div class="sub"><b>BSR-DPO</b> — Balanced Success-Recovery DPO</div>
-  <div class="authors">Yealim Park · Kyungjae Lee — Korea University</div>
+  <div class="sub"><b>BSR-DPO</b> - Balanced Success-Recovery DPO</div>
+  <div class="authors">Yealim Park · Kyungjae Lee - Korea University</div>
 </div>
 
 <div class="wrap">
 
   <div class="keymsg">
-    Financial marketers can rarely randomize live — fatigue, opt-out, and regulation get in the way.
+    Financial marketers can rarely randomize live - fatigue, opt-out, and regulation get in the way.
     <b>BSR-DPO</b> learns per-customer channel policies from logged campaigns alone:
-    <b>no collapse, no failure imitation, evaluable results.</b>
+    <b>no majority-channel collapse, no failure imitation, evaluable results</b> - and we state where
+    the modules matter (weak-overlap observational logs) and where they do not (randomized data).
   </div>
 
   <div class="stats">
     <div class="stat">
       <div class="label">Model-free value (SNIPS)<span>vs the strongest baseline, held-out test</span></div>
-      <div class="value"><b>.0454</b> <span>vs .0320</span></div>
+      <div class="value"><b>.0506</b> <span>vs .0320</span></div>
     </div>
     <div class="stat">
-      <div class="label">Usable overlap (ESS)<span>the estimate can be trusted</span></div>
-      <div class="value"><b>30.1%</b> <span>vs 24.5%</span></div>
+      <div class="label">Usable overlap (ESS)<span>above the 25% band - the estimate can be trusted</span></div>
+      <div class="value"><b>29.5%</b> <span>vs 24.5%</span></div>
     </div>
     <div class="stat">
-      <div class="label">Successes recovered / failure repetition<span>failures are never imitated</span></div>
-      <div class="value"><b>12.0%</b> <span>/ 3.4%</span></div>
+      <div class="label">Successes recovered / failure repetition<span>reward-model-free check - failures are never imitated</span></div>
+      <div class="value"><b>13.0%</b> <span>/ 3.2%</span></div>
     </div>
   </div>
 
@@ -156,13 +157,13 @@
   <section>
     <div class="kicker">In brief</div>
     <h2>What this work shows</h2>
-    <p class="lead"><b>BSR-DPO</b> (Balanced Success-Recovery DPO) extends Direct Preference Optimization — a preference-based training method — to logged marketing data. Channel policies learned naively from such logs collapse to the majority channel, and weak overlap makes them hard to evaluate without circular reasoning. The three stages address this step by step:</p>
+    <p class="lead"><b>BSR-DPO</b> (Balanced Success-Recovery DPO) extends Direct Preference Optimization - a preference-based training method - to logged marketing data. Channel policies learned naively from such logs collapse to the majority channel, and weak overlap makes them hard to evaluate without circular reasoning. The three stages address this step by step:</p>
     <div class="shows">
       <div class="show-item"><span class="tag">M0</span><p>The base DPO adaptation to logged bandit data still collapses to the majority channel.</p></div>
       <div class="show-item"><span class="tag">M1</span><p>Class-balanced weighting restores the preference gradient of minority-channel customers.</p></div>
-      <div class="show-item"><span class="tag">M2</span><p>Successful logged contacts are recovered — failed contacts are never imitated.</p></div>
+      <div class="show-item"><span class="tag">M2</span><p>Successful logged contacts are recovered - failed contacts are never imitated.</p></div>
     </div>
-    <p class="lead" style="margin-top:14px;">Screened against 13 offline baselines with SNIPS, effective-sample-size diagnostics, and reward-model-free agreement checks on the UCI Bank Marketing dataset (41,188 records) as an open proxy.</p>
+    <p class="lead" style="margin-top:14px;">Screened against 17 equal-budget offline baselines with SNIPS, doubly-robust estimates, effective-sample-size diagnostics and reward-model-free agreement checks on the UCI Bank Marketing dataset (41,188 records) as an open proxy. An external check on the Criteo randomized dataset (known propensities) confirms the personalization gain without reward-model circularity - and shows base DPO does not collapse there, so the collapse-resistance modules are a property of the weak-overlap regime, not a general advantage.</p>
   </section>
 
   <section id="contact">
@@ -178,9 +179,7 @@
     </div>
   </section>
 
-  <footer>
-    <span class="sess">Poster session — Aug 7, 15:00–15:50 · 3F lobby</span>
-  </footer>
+  <footer></footer>
 
 </div>
 
