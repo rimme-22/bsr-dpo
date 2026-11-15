@@ -83,6 +83,19 @@
   .show-item p { font-size: 14.5px; }
   .lead { font-size: 14.5px; margin-bottom: 14px; }
 
+  /* ---------- step cards (v12) ---------- */
+  .step { border: 1.5px solid var(--light); border-radius: 14px; padding: 16px 18px; margin-top: 12px; }
+  .step .num { font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--crimson); font-weight: 800; }
+  .step h3 { font-size: 18px; font-weight: 800; color: var(--ink); line-height: 1.3; margin: 4px 0 8px; letter-spacing: -0.2px; }
+  .step p { font-size: 14.5px; margin-top: 6px; }
+  .bars { display: flex; flex-direction: column; gap: 7px; margin: 10px 0 4px; }
+  .bar { display: grid; grid-template-columns: 108px 1fr; gap: 8px; align-items: center; font-size: 13px; color: var(--body); }
+  .bar .track { position: relative; height: 24px; background: #F3F4F6; border-radius: 6px; }
+  .bar .fill { height: 100%; border-radius: 6px; background: var(--gray); }
+  .bar b { position: absolute; right: 8px; top: 2px; font-size: 13.5px; font-variant-numeric: tabular-nums; color: var(--ink); }
+  .bar.hi { color: var(--crimson); font-weight: 800; }
+  .bar.hi .fill { background: var(--crimson); }
+
   /* ---------- contact card ---------- */
   .ccard {
     border: 1.5px solid var(--light); border-radius: 16px; padding: 22px;
@@ -149,21 +162,71 @@
     </div>
   </div>
 
-  <div class="buttons">
-    <a class="btn primary" href="./paper.pdf">Paper PDF</a>
-    <a class="btn" href="./poster.pdf">Poster PDF</a>
-  </div>
-
   <section>
     <div class="kicker">In brief</div>
-    <h2>What this work shows</h2>
-    <p class="lead"><b>BSR-DPO</b> (Balanced Success-Recovery DPO) extends Direct Preference Optimization - a preference-based training method - to logged marketing data. Channel policies learned naively from such logs collapse to the majority channel, and weak overlap makes them hard to evaluate without circular reasoning. The three stages address this step by step:</p>
-    <div class="shows">
-      <div class="show-item"><span class="tag">M0</span><p>The base DPO adaptation to logged bandit data still collapses to the majority channel.</p></div>
-      <div class="show-item"><span class="tag">M1</span><p>Class-balanced weighting restores the preference gradient of minority-channel customers.</p></div>
-      <div class="show-item"><span class="tag">M2</span><p>Successful logged contacts are recovered - failed contacts are never imitated.</p></div>
+    <h2>The work, step by step</h2>
+
+    <div class="step">
+      <div class="num">1 · The question</div>
+      <h3>Which marketing channel should a bank use for each customer?</h3>
+      <p>Learned from past campaign logs only. No live experiments.</p>
     </div>
-    <p class="lead" style="margin-top:14px;">Screened against 17 equal-budget offline baselines with SNIPS, doubly-robust estimates, effective-sample-size diagnostics and reward-model-free agreement checks on the UCI Bank Marketing dataset (41,188 records) as an open proxy. An external check on the Criteo randomized dataset (known propensities) confirms the personalization gain without reward-model circularity - and shows base DPO does not collapse there, so the collapse-resistance modules are a property of the weak-overlap regime, not a general advantage.</p>
+
+    <div class="step">
+      <div class="num">2 · The data</div>
+      <h3>The log is skewed toward one channel</h3>
+      <p>UCI Bank Marketing, 41,188 contacts, two channels.</p>
+      <div class="bars">
+        <div class="bar"><span>Cellular used</span><div class="track"><div class="fill" style="width:63.5%"></div><b>63.5%</b></div></div>
+        <div class="bar"><span>Telephone used</span><div class="track"><div class="fill" style="width:36.5%"></div><b>36.5%</b></div></div>
+      </div>
+      <p>Observed conversion: cellular 14.74%, telephone 5.23%.</p>
+    </div>
+
+    <div class="step">
+      <div class="num">3 · The problem</div>
+      <h3>Models collapse: everyone gets cellular</h3>
+      <p>About 12.9% of customers are estimated to respond better by telephone. They are dropped, and the average still looks fine.</p>
+      <p>A policy far from the logged one also cannot be evaluated from the log (weak overlap).</p>
+    </div>
+
+    <div class="step">
+      <div class="num">4 · The method</div>
+      <h3>BSR-DPO, built in three stages</h3>
+      <div class="shows">
+        <div class="show-item"><span class="tag">M0</span><p>DPO with an anchor to the logged policy. Collapses: only 0.5% telephone.</p></div>
+        <div class="show-item"><span class="tag">M1</span><p>Equal weight for both customer groups. No collapse (14.0% telephone), but hard to evaluate (ESS 22.7%).</p></div>
+        <div class="show-item"><span class="tag">M2</span><p>Learn from successful contacts only. No collapse (12.7% telephone) and evaluable again (ESS 29.5%).</p></div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="num">5 · The result</div>
+      <h3>Best model-free value among 17 baselines</h3>
+      <p>SNIPS on the held-out test set, 20 seeds.</p>
+      <div class="bars">
+        <div class="bar"><span>M0 (plain DPO)</span><div class="track"><div class="fill" style="width:31.1%"></div><b>.0218</b></div></div>
+        <div class="bar"><span>LR-Greedy</span><div class="track"><div class="fill" style="width:45.7%"></div><b>.0320</b></div></div>
+        <div class="bar"><span>M1</span><div class="track"><div class="fill" style="width:64.1%"></div><b>.0449</b></div></div>
+        <div class="bar hi"><span>BSR-DPO</span><div class="track"><div class="fill" style="width:72.3%"></div><b>.0506</b></div></div>
+      </div>
+      <p>Gap vs the strongest baseline (LR-Greedy): +.0186, positive in 20 of 20 seeds. Bootstrap 95% CI: +.0080 to +.0289.</p>
+      <p>Same labels and weights without the DPO anchor: SNIPS .0374 and .0430, ESS below 25%.</p>
+    </div>
+
+    <div class="step">
+      <div class="num">6 · The scope</div>
+      <h3>Where it applies</h3>
+      <p>The gain appears on skewed observational logs. On randomized data (Criteo), BSR-DPO matches the baseline.</p>
+      <p>Tested offline, with two channels.</p>
+    </div>
+
+    <div class="step">
+      <div class="num">7 · What we take from it</div>
+      <h3>Look past the average, and check evaluability first</h3>
+      <p>Average conversion can hide a customer segment that a policy leaves behind.</p>
+      <p>Before trusting a learned policy, check that the logs can evaluate it.</p>
+    </div>
   </section>
 
   <section id="contact">
@@ -184,7 +247,8 @@
 </div>
 
 <div class="quickbar">
-  <a class="qb-paper" href="./paper.pdf">Paper PDF</a>
+  <a class="qb-paper" href="./paper.pdf">Paper</a>
+  <a class="qb-contact" href="./poster.pdf">Poster</a>
   <a class="qb-contact" href="#contact">Contact</a>
 </div>
 
